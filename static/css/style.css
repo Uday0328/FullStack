@@ -4,32 +4,32 @@
    Fonts: Bodoni Moda (headings) + Inter (body)
    ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Cormorant+Garamond:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ── Design Tokens ─────────────────────────────────────────────── */
 :root {
-  --bg:            #120b05; /* Warm dark chocolate brown */
-  --bg-2:          #181008;
-  --surface:       #1f140b; /* Warm dark brown card background */
-  --surface-2:     #2a1b0f;
-  --surface-3:     #382515;
-  --border:        rgba(201, 138, 59, 0.12);
-  --border-hover:  rgba(201, 138, 59, 0.35);
-  --accent:        #c98a3b; /* Premium gold / amber accent */
-  --accent-dim:    #a26a27;
-  --accent-glow:   rgba(201, 138, 59, 0.15);
-  --accent-glow-2: rgba(201, 138, 59, 0.06);
-  --text-primary:  #ede0cc; /* Cream text */
-  --text-secondary:#c1ab99;
-  --text-muted:    #7a6655;
+  --bg:            #110d06; /* --dark */
+  --bg-2:          #1e160a; /* --dark2 */
+  --surface:       #1e160a; /* --dark2 */
+  --surface-2:     #2a1e0e; /* --text */
+  --surface-3:     #3e2e17;
+  --border:        rgba(212, 148, 58, 0.16);
+  --border-hover:  rgba(212, 148, 58, 0.45);
+  --accent:        #d4943a; /* --gold */
+  --accent-dim:    #7a5c30; /* --muted */
+  --accent-glow:   rgba(212, 148, 58, 0.15);
+  --accent-glow-2: rgba(212, 148, 58, 0.06);
+  --text-primary:  #fdf8f0; /* --cream */
+  --text-secondary:#c4b896; /* light gold/cream */
+  --text-muted:    #7a5c30; /* --muted */
   --white:         #ffffff;
-  --error:         #e05252;
-  --success:       #c98a3b;
-  --warning:       #d4a04a;
+  --error:         #c04a1a; /* --rust */
+  --success:       #d4943a;
+  --warning:       #f0b84a; /* --gold2 */
 
   /* Fonts matching premium high-contrast serif typography */
-  --font-display: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
-  --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:    'DM Sans', sans-serif;
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
 
   /* Shape */
