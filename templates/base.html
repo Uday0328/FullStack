@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{% block meta_description %}Byreddy Uday Pujith Reddy — AI & Data Science Student, aspiring Full-Stack Developer. Portfolio showcasing projects in Machine Learning, NLP, and Web Development.{% endblock %}" />
+  <meta name="keywords" content="Byreddy Uday Pujith Reddy, AI, Data Science, Machine Learning, Full-Stack Developer, Portfolio" />
+  <meta name="author" content="Byreddy Uday Pujith Reddy" />
+  <meta property="og:title" content="{% block og_title %}Uday Pujith Reddy — Portfolio{% endblock %}" />
+  <meta property="og:description" content="AI & Data Science undergraduate | Full-Stack Developer Portfolio" />
+  <meta property="og:type" content="website" />
+  <title>{% block title %}Uday Pujith Reddy | AI & Data Science Portfolio{% endblock %}</title>
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% block body %}{% endblock %}
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
