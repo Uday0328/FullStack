@@ -4,15 +4,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ── Navbar scroll ─────────────────────────────────────────────
-  const navbar = document.getElementById('navbar');
-  function handleScroll() {
-    if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 20);
-    updateActiveNavLink();
-  }
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  handleScroll();
-
   // ── Active nav link on scroll ─────────────────────────────────
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link[data-section]');
@@ -26,6 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
       link.classList.toggle('active', link.dataset.section === current);
     });
   }
+
+  // ── Navbar scroll ─────────────────────────────────────────────
+  const navbar = document.getElementById('navbar');
+  function handleScroll() {
+    if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 20);
+    updateActiveNavLink();
+  }
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
 
   // ── Smooth scroll ─────────────────────────────────────────────
   const hamburger = document.getElementById('hamburger');
