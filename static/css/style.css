@@ -8,27 +8,27 @@
 
 /* ── Design Tokens ─────────────────────────────────────────────── */
 :root {
-  --bg:            #06030a;
-  --bg-2:          #0c0808;
-  --surface:       #141008;
-  --surface-2:     #1c1510;
-  --surface-3:     #261c15;
-  --border:        rgba(196, 120, 60, 0.14);
-  --border-hover:  rgba(196, 120, 60, 0.40);
-  --accent:        #c4783c;
-  --accent-dim:    #a05e28;
-  --accent-glow:   rgba(196, 120, 60, 0.15);
-  --accent-glow-2: rgba(196, 120, 60, 0.06);
-  --text-primary:  #ede0cc;
-  --text-secondary:#9a806a;
-  --text-muted:    #5a4535;
-  --white:         #f5ebe0;
+  --bg:            #120b05; /* Warm dark chocolate brown */
+  --bg-2:          #181008;
+  --surface:       #1f140b; /* Warm dark brown card background */
+  --surface-2:     #2a1b0f;
+  --surface-3:     #382515;
+  --border:        rgba(201, 138, 59, 0.12);
+  --border-hover:  rgba(201, 138, 59, 0.35);
+  --accent:        #c98a3b; /* Premium gold / amber accent */
+  --accent-dim:    #a26a27;
+  --accent-glow:   rgba(201, 138, 59, 0.15);
+  --accent-glow-2: rgba(201, 138, 59, 0.06);
+  --text-primary:  #ede0cc; /* Cream text */
+  --text-secondary:#c1ab99;
+  --text-muted:    #7a6655;
+  --white:         #ffffff;
   --error:         #e05252;
-  --success:       #c4783c;
+  --success:       #c98a3b;
   --warning:       #d4a04a;
 
   /* Fonts matching premium high-contrast serif typography */
-  --font-display: 'Bodoni Moda', 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', 'Courier New', monospace;
 
@@ -127,7 +127,7 @@ h1, h2, h3, h4 {
   line-height: 1.15;
   margin-bottom: 16px;
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   letter-spacing: -0.5px;
 }
 
@@ -139,7 +139,12 @@ h1, h2, h3, h4 {
   font-family: var(--font-sans);
 }
 
-.accent { color: var(--accent); }
+.accent {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+}
 
 /* ── Buttons ─────────────────────────────────────────────────────── */
 .btn {
@@ -446,11 +451,15 @@ h1, h2, h3, h4 {
   color: var(--white);
   margin-bottom: 14px;
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
 }
 
 .hero-name .highlight {
-  background: linear-gradient(135deg, #c4783c 0%, #e8a86c 45%, #a05e28 100%);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+  background: linear-gradient(135deg, #c98a3b 0%, #f7c88b 50%, #c98a3b 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
