@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Dashboard — Uday Portfolio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────── -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">Uday<span>.</span>Admin</div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Navigation</div>
+      <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link" id="sidebar-dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="{{ url_for('admin.add_project_view') }}" class="sidebar-link" id="sidebar-add-project">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Add Project
+      </a>
+      <a href="{{ url_for('admin.messages_view') }}" class="sidebar-link" id="sidebar-messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+        {% if unread > 0 %}
+          <span class="sidebar-badge">{{ unread }}</span>
+        {% endif %}
+      </a>
+
+      <div class="sidebar-section-label">Site</div>
+      <a href="{{ url_for('main.index') }}" class="sidebar-link" target="_blank" id="sidebar-view-site">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        View Portfolio
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">{{ session['admin_username'][0].upper() }}</div>
+        <div>
+          <div class="sidebar-username">{{ session['admin_username'] }}</div>
+          <div class="sidebar-role">Administrator</div>
+        </div>
+      </div>
+      <form method="POST" action="{{ url_for('admin.logout') }}" class="logout-form" id="logout-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button type="submit" id="logout-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ── Main area ───────────────────────────────────────────── -->
+  <div class="admin-main">
+
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <div>
+        <div class="admin-page-title">Dashboard</div>
+        <div class="admin-page-sub">Manage your portfolio content</div>
+      </div>
+      <div class="admin-topbar-actions">
+        <a href="{{ url_for('admin.add_project_view') }}" class="admin-btn admin-btn-primary" id="topbar-add-project">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Project
+        </a>
+      </div>
+    </div>
+
+    <!-- Flash messages -->
+    <div class="flash-container">
+      {% with flash_msgs = get_flashed_messages(with_categories=true) %}
+        {% if flash_msgs %}
+          {% for category, msg_text in flash_msgs %}
+            <div class="flash flash-{{ category }}" role="alert">{{ msg_text }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Stats -->
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="stat-card-label">Total Projects</div>
+          <div class="stat-card-value">{{ projects | length }}</div>
+          <div class="stat-card-sub">in database</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-card-label">Featured</div>
+          <div class="stat-card-value">{{ projects | selectattr('is_featured', 'equalto', 1) | list | length }}</div>
+          <div class="stat-card-sub">highlighted projects</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-card-label">Messages</div>
+          <div class="stat-card-value">{{ messages | length }}</div>
+          <div class="stat-card-sub">{{ unread }} unread</div>
+        </div>
+      </div>
+
+      <!-- Projects table -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div class="admin-section-title">Projects</div>
+          <a href="{{ url_for('admin.add_project_view') }}" class="admin-btn admin-btn-outline" id="section-add-project">+ Add New</a>
+        </div>
+
+        {% if projects %}
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Technologies</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Featured</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for project in projects %}
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:#555570">{{ project.id }}</td>
+                <td style="font-weight:600;max-width:200px">{{ project.title }}</td>
+                <td class="tech-cell">{{ project.technologies }}</td>
+                <td style="font-size:0.82rem;color:#6666aa;white-space:nowrap">{{ project.date }}</td>
+                <td>
+                  {% if project.status == 'Ongoing' %}
+                    <span class="status-badge status-ongoing">🔄 Ongoing</span>
+                  {% else %}
+                    <span class="status-badge" style="background:rgba(0,212,170,0.08);color:#00d4aa;border:1px solid rgba(0,212,170,0.2)">✓ Done</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if project.is_featured %}
+                    <span class="status-badge status-featured">⭐ Yes</span>
+                  {% else %}
+                    <span style="font-size:0.75rem;color:#555570">—</span>
+                  {% endif %}
+                </td>
+                <td class="actions-cell">
+                  <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <!-- Toggle featured -->
+                    <form method="POST" action="{{ url_for('admin.feature_project', project_id=project.id) }}" style="display:inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <button type="submit" class="admin-btn admin-btn-warning"
+                              title="{{ 'Unfeature' if project.is_featured else 'Feature' }} project"
+                              id="feature-btn-{{ project.id }}">
+                        {{ '★' if project.is_featured else '☆' }}
+                      </button>
+                    </form>
+                    <!-- Edit -->
+                    <a href="{{ url_for('admin.edit_project_view', project_id=project.id) }}" class="admin-btn admin-btn-outline"
+                       title="Edit project" id="edit-btn-{{ project.id }}">
+                      ✏️ Edit
+                    </a>
+                    <!-- Delete -->
+                    <form method="POST" action="{{ url_for('admin.delete_project_view', project_id=project.id) }}" style="display:inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <button type="submit" class="admin-btn admin-btn-danger"
+                              data-confirm="Delete '{{ project.title }}'? This cannot be undone."
+                              id="delete-btn-{{ project.id }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="admin-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+          <p>No projects yet. <a href="{{ url_for('admin.add_project_view') }}" style="color:#00d4aa">Add your first project →</a></p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Recent messages preview -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div class="admin-section-title">Recent Messages</div>
+          <a href="{{ url_for('admin.messages_view') }}" class="admin-btn admin-btn-outline" id="view-all-messages">View All</a>
+        </div>
+
+        {% set recent = messages[:5] %}
+        {% if recent %}
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Preview</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for msg in recent %}
+              <tr>
+                <td style="font-weight:600">{{ msg.name }}</td>
+                <td style="font-size:0.82rem;color:#6666aa">{{ msg.email }}</td>
+                <td class="msg-excerpt">{{ msg.message }}</td>
+                <td>
+                  {% if not msg.is_read %}
+                    <span class="status-badge status-unread">● New</span>
+                  {% else %}
+                    <span style="font-size:0.75rem;color:#555570">Read</span>
+                  {% endif %}
+                </td>
+                <td style="font-size:0.78rem;color:#555570;white-space:nowrap">{{ msg.created_at.strftime('%Y-%m-%d') if msg.created_at else '—' }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="admin-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <p>No messages yet.</p>
+        </div>
+        {% endif %}
+      </div>
+
+    </div><!-- /admin-content -->
+  </div><!-- /admin-main -->
+</div><!-- /admin-layout -->
+
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
