@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Login — Uday Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;0,6..96,800;1,6..96,700;1,6..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+</head>
+<body class="admin-body">
+
+<main class="login-page">
+  <div class="login-card">
+    <div class="login-logo">Uday<span>.</span>Admin</div>
+    <p class="login-subtitle">Sign in to manage your portfolio</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('admin.login') }}" novalidate id="admin-login-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+      <div class="login-field">
+        <label class="login-label" for="admin-username">Username</label>
+        <input
+          type="text"
+          id="admin-username"
+          name="username"
+          class="login-input"
+          placeholder="Enter your username"
+          autocomplete="username"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="login-field">
+        <label class="login-label" for="admin-password">Password</label>
+        <input
+          type="password"
+          id="admin-password"
+          name="password"
+          class="login-input"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="login-btn" id="admin-login-btn">Sign In</button>
+    </form>
+
+    <p class="login-back">
+      <a href="{{ url_for('main.index') }}">← Back to Portfolio</a>
+    </p>
+  </div>
+</main>
+
+</body>
+</html>
