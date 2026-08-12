@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>{% if is_edit %}Edit Project{% else %}Add Project{% endif %} — Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">Uday<span>.</span>Admin</div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link" id="sidebar-dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="{{ url_for('admin.add_project_view') }}" class="sidebar-link {% if not is_edit %}active{% endif %}" id="sidebar-add">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Add Project
+      </a>
+      <a href="{{ url_for('admin.messages_view') }}" class="sidebar-link" id="sidebar-messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+      </a>
+      <a href="{{ url_for('main.index') }}" class="sidebar-link" target="_blank" id="sidebar-view-site">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        View Portfolio
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <form method="POST" action="{{ url_for('admin.logout') }}" class="logout-form" id="logout-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button type="submit" id="logout-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div class="admin-page-title">{% if is_edit %}Edit Project{% else %}Add New Project{% endif %}</div>
+        <div class="admin-page-sub">{% if is_edit %}Modify details for "{{ project.title if project else 'Project' }}"{% else %}Fill in the details below to add a project to your portfolio{% endif %}</div>
+      </div>
+      <a href="{{ url_for('admin.dashboard') }}" class="admin-btn admin-btn-outline" id="back-to-dashboard">← Back</a>
+    </div>
+
+    <div class="flash-container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}" role="alert">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="admin-content">
+      <form method="POST" action="{% if is_edit %}{{ url_for('admin.edit_project_view', project_id=project.id) }}{% else %}{{ url_for('admin.add_project_view') }}{% endif %}" class="admin-form" id="project-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="proj-title">Project Title <span class="required">*</span></label>
+          <input
+            type="text"
+            id="proj-title"
+            name="title"
+            class="admin-form-control"
+            placeholder="e.g. Silent Help"
+            value="{{ form_data.get('title', '') }}"
+            maxlength="200"
+            required
+          />
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="proj-desc">Description <span class="required">*</span></label>
+          <textarea
+            id="proj-desc"
+            name="description"
+            class="admin-form-control"
+            rows="5"
+            placeholder="Describe your project..."
+            maxlength="2000"
+            required
+          >{{ form_data.get('description', '') }}</textarea>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="proj-tech">Technologies <span class="required">*</span></label>
+          <input
+            type="text"
+            id="proj-tech"
+            name="technologies"
+            class="admin-form-control"
+            placeholder="e.g. Python, Scikit-learn, Flask"
+            value="{{ form_data.get('technologies', '') }}"
+            maxlength="500"
+            required
+          />
+          <div class="admin-form-hint">Comma-separated list of technologies used</div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="proj-date">Date <span class="required">*</span></label>
+          <input
+            type="text"
+            id="proj-date"
+            name="date"
+            class="admin-form-control"
+            placeholder="e.g. June 2026 or June 2026 - Present"
+            value="{{ form_data.get('date', '') }}"
+            maxlength="100"
+            required
+          />
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="proj-status">Status</label>
+          <select id="proj-status" name="status" class="admin-form-control">
+            <option value="Completed" {% if form_data.get('status') == 'Completed' %}selected{% endif %}>Completed</option>
+            <option value="Ongoing" {% if form_data.get('status') == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+            <option value="In Progress" {% if form_data.get('status') == 'In Progress' %}selected{% endif %}>In Progress</option>
+          </select>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="proj-github">GitHub URL</label>
+          <input
+            type="url"
+            id="proj-github"
+            name="github_url"
+            class="admin-form-control"
+            placeholder="https://github.com/username/repo"
+            value="{{ form_data.get('github_url', '') }}"
+          />
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-form-label" for="proj-demo">Live Demo URL</label>
+          <input
+            type="url"
+            id="proj-demo"
+            name="demo_url"
+            class="admin-form-control"
+            placeholder="https://your-demo.com"
+            value="{{ form_data.get('demo_url', '') }}"
+          />
+        </div>
+
+        <div class="admin-form-group">
+          <div class="admin-checkbox-group">
+            <input
+              type="checkbox"
+              id="proj-featured"
+              name="is_featured"
+              class="admin-checkbox"
+              {% if form_data.get('is_featured') %}checked{% endif %}
+            />
+            <label class="admin-checkbox-label" for="proj-featured">Mark as Featured Project</label>
+          </div>
+          <div class="admin-form-hint">Featured projects are highlighted on the portfolio homepage.</div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:28px">
+          <button type="submit" class="admin-btn admin-btn-primary" id="save-project-btn" style="padding:11px 24px;font-size:0.9rem">
+            {% if is_edit %}✓ Update Project{% else %}✓ Save Project{% endif %}
+          </button>
+          <a href="{{ url_for('admin.dashboard') }}" class="admin-btn admin-btn-outline" style="padding:11px 24px;font-size:0.9rem" id="cancel-add-project">
+            Cancel
+          </a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
