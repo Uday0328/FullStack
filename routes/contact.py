@@ -73,6 +73,8 @@ def send_email_via_resend(name, sender_email, message):
             headers={
                 'Authorization': f'Bearer {api_key}',
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'User-Agent': 'PortfolioContact/1.0 (Python)',
             },
             method='POST'
         )
