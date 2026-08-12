@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Messages — Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">Uday<span>.</span>Admin</div>
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('admin.dashboard') }}" class="sidebar-link" id="sidebar-dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="{{ url_for('admin.add_project_view') }}" class="sidebar-link" id="sidebar-add-project">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Add Project
+      </a>
+      <a href="{{ url_for('admin.messages_view') }}" class="sidebar-link active" id="sidebar-messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+      </a>
+      <a href="{{ url_for('main.index') }}" class="sidebar-link" target="_blank" id="sidebar-view-site">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        View Portfolio
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <form method="POST" action="{{ url_for('admin.logout') }}" class="logout-form" id="logout-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button type="submit" id="logout-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <div class="admin-page-title">Contact Messages</div>
+        <div class="admin-page-sub">{{ messages | length }} total messages</div>
+      </div>
+      <a href="{{ url_for('admin.dashboard') }}" class="admin-btn admin-btn-outline" id="back-dashboard-from-messages">← Dashboard</a>
+    </div>
+
+    <div class="flash-container">
+      {% with flash_msgs = get_flashed_messages(with_categories=true) %}
+        {% if flash_msgs %}
+          {% for category, message in flash_msgs %}
+            <div class="flash flash-{{ category }}" role="alert">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="admin-content">
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <div class="admin-section-title">All Messages</div>
+        </div>
+
+        {% if messages %}
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Received</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for msg in messages %}
+              <tr>
+                <td style="font-weight:600;white-space:nowrap">{{ msg.name }}</td>
+                <td>
+                  <a href="mailto:{{ msg.email }}" style="color:#00d4aa;font-size:0.85rem" id="reply-{{ msg.id }}">{{ msg.email }}</a>
+                </td>
+                <td style="max-width:320px;font-size:0.85rem;color:#8888aa;line-height:1.5">{{ msg.message }}</td>
+                <td>
+                  {% if not msg.is_read %}
+                    <span class="status-badge status-unread">● New</span>
+                  {% else %}
+                    <span style="font-size:0.75rem;color:#555570">Read</span>
+                  {% endif %}
+                </td>
+                <td style="font-size:0.78rem;color:#555570;white-space:nowrap">
+                  {{ msg.created_at.strftime('%Y-%m-%d %H:%M') if msg.created_at else '—' }}
+                </td>
+                <td>
+                  <form method="POST" action="{{ url_for('admin.delete_message_view', message_id=msg.id) }}" style="display:inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <button type="submit"
+                            class="admin-btn admin-btn-danger"
+                            data-confirm="Delete this message from {{ msg.name }}?"
+                            id="delete-msg-{{ msg.id }}">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                      Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="admin-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <p>No contact messages yet.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
